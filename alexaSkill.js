@@ -1,5 +1,14 @@
 // alexaSkill.js
 const Alexa = require('ask-sdk-core');
+const LaunchRequestHandler = {
+  canHandle(handlerInput) {
+    return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
+  },
+  handle(handlerInput) {
+    const speakOutput = 'Welcome to Blog Writer. You can say start a blog to begin.';
+    return handlerInput.responseBuilder.speak(speakOutput).getResponse();
+  }
+};
 
 // StartIntent Handler
 const StartIntentHandler = {
@@ -83,8 +92,9 @@ const ErrorHandler = {
   }
 };
 
-const skill = Alexa.SkillBuilders.custom()
+exports.handler = Alexa.SkillBuilders.custom()
   .addRequestHandlers(
+    LaunchRequestHandler,
     StartIntentHandler,
     ParagraphIntentHandler,
     ReferenceIntentHandler,
@@ -94,4 +104,4 @@ const skill = Alexa.SkillBuilders.custom()
   .addErrorHandlers(ErrorHandler)
   .create();
 
-module.exports = { skill };
+// module.exports = skill;
