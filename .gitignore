@@ -1,3 +1,5 @@
 node_modules/
 .env
 en-US - Copy.json
+startIntentTest.js
+test/
