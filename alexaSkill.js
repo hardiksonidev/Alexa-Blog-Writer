@@ -134,9 +134,11 @@
 
 // // module.exports = skill;
 const Alexa = require('ask-sdk-core');
+const skillBuilder = Alexa.SkillBuilders.custom();
+
 const StartIntentHandler = require('./skill/handlers/StartIntentHandler');
 const ParagraphIntentHandler = require('./skill/handlers/ParagraphIntentHandler');
-const skillBuilder = Alexa.SkillBuilders.custom();
+const PublishIntentHandler = require('./skill/handlers/PublishIntentHandler');
 
 const ErrorHandler = {
   canHandle() {
@@ -151,7 +153,8 @@ const ErrorHandler = {
 };
 
 const skill = skillBuilder
-  .addRequestHandlers(StartIntentHandler, ParagraphIntentHandler)
+  .addRequestHandlers(StartIntentHandler, ParagraphIntentHandler, PublishIntentHandler)
+  .addErrorHandlers(ErrorHandler)
   .create(); // ✅ This returns a skill object, not Lambda handler
 
 module.exports = skill;

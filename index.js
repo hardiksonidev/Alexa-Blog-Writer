@@ -11,6 +11,11 @@ app.use(bodyParser.json());
 const skillBuilder = Alexa.SkillBuilders.custom();
 const { ExpressAdapter } = require('ask-sdk-express-adapter');
 
+
+// const publishToWordPress = require('./publishToWordPress'); // adjust path if needed
+
+const publishToWordPress = require('./publishToWordPress');
+
 const handlers = require('./skill');
 
 const skill = skillBuilder
@@ -74,30 +79,87 @@ app.post('/start', (req, res) => {
 //   }
 // });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// app.post('/paragraph', async (req, res) => {
+//   try {
+//     const { paragraph } = req.body;
+
+//     if (!paragraph) {
+//       return res.status(400).json({ error: 'Paragraph missing' });
+//     }
+
+//     console.log('Received paragraph:', paragraph);
+
+//     // Simulate saving or processing paragraph
+//     res.json({ success: true, message: 'Paragraph received!' });
+
+//   } catch (error) {
+//     console.error('Server Error:', error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// });
+
+// app.post('/paragraph', async (req, res) => {
+//   try {
+//     const { paragraph } = req.body;
+//     if (!paragraph) {
+//       return res.status(400).json({ error: 'Paragraph is missing.' });
+//     }
+
+//     const polished = `Polished version of: ${paragraph}`; // or your actual logic
+//     res.json({
+//       message: 'Paragraph added.',
+//       polished, // ← This is what you need
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+
+
+
 app.post('/paragraph', async (req, res) => {
   try {
     const { paragraph } = req.body;
 
     if (!paragraph) {
-      return res.status(400).json({ error: 'Paragraph missing' });
+      return res.status(400).json({ error: 'Paragraph is missing.' });
     }
 
-    console.log('Received paragraph:', paragraph);
+    const polished = await polishText(paragraph); // <-- Call your polishText function
 
-    // Simulate saving or processing paragraph
-    res.json({ success: true, message: 'Paragraph received!' });
-
+    res.json({
+      message: 'Paragraph added.',
+      polished: polished, // <-- Return this for Alexa to access
+    });
   } catch (error) {
     console.error('Server Error:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).json({ error: 'Failed to polish the paragraph.' });
   }
 });
 
 
-
-
-
-
+// app.post('/paragraph', async (req, res) => {
+//   const para = req.body.paragraph;
+//   const polished = await polishText(para);
+//   blogData.paragraphs.push(polished);
+//   res.send({ message: 'Paragraph added.', polished });
+// });
 app.post('/reference', async (req, res) => {
   const meta = await fetchMeta(req.body.url);
   blogData.references.push(meta);
@@ -109,6 +171,22 @@ app.post('/publish', async (req, res) => {
   const result = await publishToWordPress(blogData.title, content);
   res.send({ message: 'Published.', url: result.link });
 });
+// async function publishToWordPress(title, content) {
+//   console.log('Pretending to publish to WordPress with content:', content);
+//   return { success: true };
+// }
+// app.post('/publish', async (req, res) => {
+//   try {
+//     const { content } = formatBlog(blogData);
+//    // const response = await publishToWordPress('test', content);; // ✅ this line was throwing error
+//    const response = await publishToWordPress(blogData.title, content);
+//     res.status(200).json({ message: 'Published successfully', response });
+//   } catch (err) {
+//     console.error('Publish error:', err);
+//     res.status(500).send('Internal Server Error');
+//   }
+// });
+
 
 // async function polishText(text) {
   
@@ -149,6 +227,11 @@ async function polishText(text) {
   }
 }
 
+// async function publishToWordPress(content) {
+//   // example logic – replace with your real one
+//   console.log("Publishing to WordPress:", content);
+//   return { success: true };
+// }
 
 // async function publishToWordPress(title, content) {
 //   const wpUrl = `${process.env.WORDPRESS_URL}/wp-json/wp/v2/posts`;
