@@ -7,7 +7,14 @@ const { fetchMeta } = require('./utils/fetchMeta');
 
 const app = express();
 app.use(bodyParser.json());
+// Add Alexa endpoint
+const skillBuilder = require('./alexaSkill');
+const { ExpressAdapter } = require('ask-sdk-express-adapter');
 
+const skill = skillBuilder.create();
+const skillAdapter = new ExpressAdapter(skill, false, false);
+
+app.post('/alexa', skillAdapter.getRequestHandlers());
 let blogData = { title: '', paragraphs: [], references: [] };
 
 app.post('/start', (req, res) => {
