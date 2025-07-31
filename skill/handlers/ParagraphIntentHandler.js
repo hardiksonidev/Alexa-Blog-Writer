@@ -33,8 +33,36 @@
 
 // module.exports = ParagraphIntentHandler;
 
-const polishText = require('../../polishText'); // adjust path if needed
+// const polishText = require('../../polishText'); // adjust path if needed
+// require('dotenv').config();
+// const ParagraphIntentHandler = {
+//   canHandle(handlerInput) {
+//     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+//       && handlerInput.requestEnvelope.request.intent.name === 'ParagraphIntent';
+//   },
+//   async handle(handlerInput) {
+//     const paragraph = handlerInput.requestEnvelope.request.intent.slots.paragraph.value;
+    
+//     let polished;
+//     try {
+//       polished = paragraph;// await polishText(paragraph);
+//     } catch (error) {
+//       polished = paragraph; // fallback to original
+//     }
+
+//     const speechText = `Paragraph added: ${polished}`;
+
+//     return handlerInput.responseBuilder
+//       .speak(speechText)
+//       .getResponse();
+//   }
+// };
+// module.exports = ParagraphIntentHandler;
+
+
+const axios = require('axios');
 require('dotenv').config();
+
 const ParagraphIntentHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
@@ -42,12 +70,19 @@ const ParagraphIntentHandler = {
   },
   async handle(handlerInput) {
     const paragraph = handlerInput.requestEnvelope.request.intent.slots.paragraph.value;
-    
-    let polished;
+
+    let polished = paragraph;
+
     try {
-      polished = paragraph;// await polishText(paragraph);
+      const response = await axios.post(`${process.env.API_BASE_URL}/paragraph`, {
+        paragraph: paragraph
+      });
+
+      // Safely access the polished text if it exists
+      polished = response?.data?.polished || paragraph;
+
     } catch (error) {
-      polished = paragraph; // fallback to original
+      console.error('Error calling polishText API:', error.message);
     }
 
     const speechText = `Paragraph added: ${polished}`;
@@ -57,4 +92,5 @@ const ParagraphIntentHandler = {
       .getResponse();
   }
 };
+
 module.exports = ParagraphIntentHandler;

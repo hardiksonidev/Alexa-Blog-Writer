@@ -141,7 +141,7 @@ app.post('/paragraph', async (req, res) => {
       return res.status(400).json({ error: 'Paragraph is missing.' });
     }
 
-    const polished = await polishText(paragraph); // <-- Call your polishText function
+    const polished = paragraph; //await polishText(paragraph) || paragraph; // <-- Call your polishText function
 
     res.json({
       message: 'Paragraph added.',
@@ -167,9 +167,14 @@ app.post('/reference', async (req, res) => {
 });
 
 app.post('/publish', async (req, res) => {
-  const content = formatBlog(blogData);
-  const result = await publishToWordPress(blogData.title, content);
-  res.send({ message: 'Published.', url: result.link });
+  try {
+    const content = formatBlog(blogData);
+    const result = await publishToWordPress(blogData.title, content);
+    res.send({ message: 'Published.', url: result.link });
+  } catch (error) {
+    console.error('Publish error:', error.message);
+    res.status(500).json({ error: 'Failed to publish.' });
+  }
 });
 // async function publishToWordPress(title, content) {
 //   console.log('Pretending to publish to WordPress with content:', content);
