@@ -7,6 +7,8 @@ const { fetchMeta } = require('./utils/fetchMeta');
 const Alexa = require('ask-sdk-core');
 const app = express();
 app.use(bodyParser.json());
+const cors = require('cors');
+app.use(cors());
 // Add Alexa endpoint
 const skillBuilder = Alexa.SkillBuilders.custom();
 const { ExpressAdapter } = require('ask-sdk-express-adapter');
