@@ -143,8 +143,11 @@ app.post('/paragraph', async (req, res) => {
       return res.status(400).json({ error: 'Paragraph is missing.' });
     }
 
-    const polished = paragraph; //await polishText(paragraph) || paragraph; // <-- Call your polishText function
+    //const polished = await polishText(paragraph); // <-- Call your polishText function
 
+
+    const polished = paragraph; // <-- Call your polishText function
+    blogData.paragraphs.push(polished);
     res.json({
       message: 'Paragraph added.',
       polished: polished, // <-- Return this for Alexa to access
@@ -171,7 +174,8 @@ app.post('/reference', async (req, res) => {
 app.post('/publish', async (req, res) => {
   try {
     const content = formatBlog(blogData);
-    const result = await publishToWordPress(blogData.title, content);
+    const excerpt = blogData.paragraphs?.[0] || '';
+    const result = await publishToWordPress(blogData.title, content, excerpt);
     res.send({ message: 'Published.', url: result.link });
   } catch (error) {
     console.error('Publish error:', error.message);
@@ -227,6 +231,7 @@ async function polishText(text) {
         },
       }
     );
+    //console.log('OpenAI response:',res.data.choices[0].message.content.trim());
     return res.data.choices[0].message.content.trim();
   } catch (err) {
     console.error('OpenAI API Error:', err.response?.data || err.message);
