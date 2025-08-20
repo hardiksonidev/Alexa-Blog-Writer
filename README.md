@@ -37,7 +37,7 @@ Alexa → Your blog has been published. You can view it at <WordPress URL>.
 
 📦 Setup & Deployment
 1. Clone the repo
-git clone https://github.com/yourusername/alexa-blog-writer.git
+git clone https://github.com/hardiksonidev/Alexa-Blog-Writer.git
 cd alexa-blog-writer
 
 2. Install dependencies
